@@ -5,6 +5,8 @@ import (
 	"io"
 )
 
+// The Lexer implementation is entirely taken from Rob Pike's "Lexical Scanning
+// in Go" talk (https://www.youtube.com/watch?v=HxaD_trXwRE).
 func NewLexer(input []byte) *Lexer {
 	return &Lexer{
 		input: input,
@@ -95,7 +97,7 @@ func (l *Lexer) AcceptRun(valid []byte) {
 func (l *Lexer) AcceptRunFn(validPredicate func(byte) bool) {
 	for {
 		next, err := l.Next()
-		if err == nil || !validPredicate(next) {
+		if err != nil || !validPredicate(next) {
 			break
 		}
 	}
