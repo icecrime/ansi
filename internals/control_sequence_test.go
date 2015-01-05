@@ -28,7 +28,7 @@ func cmpControlSequence(t *testing.T, result, expected *SequenceData) {
 	}
 }
 
-func TestControlSequence(t *testing.T) {
+func TestCompleteSequence(t *testing.T) {
 	b := []byte("\x1B[1;2<;3+m")
 	seq, err := ParseControlSequence(b)
 	if err != nil {
@@ -40,6 +40,20 @@ func TestControlSequence(t *testing.T) {
 		Params:  [][]byte{[]byte("1"), []byte("2<"), []byte("3")},
 		Inters:  []byte("+"),
 		Command: 'm',
+	}
+	cmpControlSequence(t, seq, expected)
+}
+
+func TestMinimalSequence(t *testing.T) {
+	b := []byte("\x1B_t")
+	seq, err := ParseControlSequence(b)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := &SequenceData{
+		Prefix:  '_',
+		Command: 't',
 	}
 	cmpControlSequence(t, seq, expected)
 }

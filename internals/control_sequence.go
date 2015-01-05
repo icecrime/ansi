@@ -31,10 +31,16 @@ func ParseControlSequence(v []byte) (*SequenceData, error) {
 	}
 
 	// Value of i marks the separation between (semicolon-separated) parameters
-	// and intermediate bytes.
+	// and intermediate bytes. One catch: when no parameters are specified, we
+	// want to have [][]byte{} rather than [][]byte{[]byte{}}.
+	params := [][]byte{}
+	if i >= 2 {
+		params = bytes.Split(v[2:i+1], []byte{';'})
+	}
+
 	return &SequenceData{
 		Prefix:  v[1],
-		Params:  bytes.Split(v[2:i+1], []byte{';'}),
+		Params:  params,
 		Inters:  v[i+1 : end],
 		Command: v[end],
 	}, nil
